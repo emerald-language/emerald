@@ -1,7 +1,7 @@
 # Emerald
 <a href="https://codeberg.org/emerald-lang/emerald">
   <img src="https://img.shields.io/badge/Codeberg-primary%20repo-2185d0?logo=codeberg&logoColor=white"
-       style="height:48px;">
+       style="height:28px;">
 </a>
 
 
