@@ -1,5 +1,9 @@
 # Emerald
-[![Codeberg](https://img.shields.io/badge/Codeberg-primary%20repo-2185d0?style=flat-square&logo=codeberg&logoColor=white)](https://codeberg.org/emerald-lang/emerald)
+<a href="https://codeberg.org/emerald-lang/emerald">
+  <img src="https://img.shields.io/badge/Codeberg-primary%20repo-2185d0?logo=codeberg&logoColor=white"
+       style="height:48px;">
+</a>
+
 
 This repository exists as a **[mirror](https://github.com/kleeedolinux/emerald/tree/mirror)**.
 
