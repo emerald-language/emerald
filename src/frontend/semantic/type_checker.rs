@@ -442,6 +442,39 @@ impl<'a> TypeChecker<'a> {
                     return_type: Box::new(Type::Primitive(crate::core::types::primitive::PrimitiveType::Void)),
                 })
             }
+            Expr::ArrayLiteral(a) => {
+                // infer array type from elements
+                if a.elements.is_empty() {
+                    // empty array - default 2 int array
+                    Type::Array(crate::core::types::composite::ArrayType {
+                        element: Box::new(Type::Primitive(crate::core::types::primitive::PrimitiveType::Int)),
+                        size: 0,
+                    })
+                } else {
+                    // chk all elements have the same type
+                    let first_type = self.check_expr(&a.elements[0]);
+                    let mut all_same = true;
+                    for element in &a.elements[1..] {
+                        let elem_type = self.check_expr(element);
+                        if elem_type != first_type {
+                            self.error(
+                                element.span(),
+                                "Array literal elements must all have the same type",
+                            );
+                            all_same = false;
+                        }
+                    }
+                    if all_same {
+                        Type::Array(crate::core::types::composite::ArrayType {
+                            element: Box::new(first_type),
+                            size: a.elements.len(),
+                        })
+                    } else {
+                        // err case - return void
+                        Type::Primitive(crate::core::types::primitive::PrimitiveType::Void)
+                    }
+                }
+            }
             Expr::Null => {
                 Type::Pointer(crate::core::types::pointer::PointerType::new(
                     Type::Primitive(crate::core::types::primitive::PrimitiveType::Void),

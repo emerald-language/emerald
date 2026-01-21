@@ -2,7 +2,7 @@ use crate::core::ast::Ast;
 use crate::error::{Diagnostic, DiagnosticKind, Reporter};
 use crate::frontend::lexer::Lexer;
 use crate::frontend::parser::Parser;
-use codespan::{FileId, Files};
+use codespan::FileId;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 
