@@ -1,3 +1,13 @@
+<<<<<<< HEAD
+/target
+*.hir
+*.mir
+*.errors
+*.output
+*.doc 
+test_output/
+*.py
+=======
 # Compiled Object files
 *.o
 *.obj
@@ -65,3 +75,4 @@ docs/
 
 # Code coverage
 *.lst
+>>>>>>> 6b913a8ee3dcd3932018c4602a56c75659cf75ab
