@@ -26,4 +26,4 @@ jobs:
           git checkout main
           git merge codeberg/main -X ours --no-edit
           git checkout HEAD -- README.md
-          git push origin main
+          git push origin main --force
