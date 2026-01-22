@@ -172,7 +172,31 @@ impl<'a> SymbolCollector<'a> {
                     self.error(f.span, &e);
                 }
             }
-            Item::Foreign(_) | Item::Require(_) | Item::Use(_) => {
+            Item::Foreign(f) => {
+                // collect all foreign functions into symbol table
+                for func in &f.functions {
+                    // resolve param types and return type
+                    let params: Vec<crate::core::types::ty::Type> = func.params.iter()
+                        .map(|p| crate::core::types::resolver::resolve_ast_type(&p.type_))
+                        .collect();
+                    let return_type = func.return_type.as_ref()
+                        .map(|t| crate::core::types::resolver::resolve_ast_type(t));
+                    
+                    let symbol = Symbol {
+                        name: func.name.clone(),
+                        kind: SymbolKind::Function {
+                            params,
+                            return_type,
+                        },
+                        span: func.span,
+                        defined: true,
+                    };
+                    if let Err(e) = self.symbol_table.define(func.name.clone(), symbol) {
+                        self.error(func.span, &e);
+                    }
+                }
+            }
+            Item::Require(_) | Item::Use(_) => {
                 // these dont crt symbols in the symbol table
             }
         }

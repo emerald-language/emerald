@@ -56,8 +56,13 @@ impl<'a> Lexer<'a> {
             ']' => self.make_token(TokenKind::RightBracket),
             ',' => self.make_token(TokenKind::Comma),
             ';' => self.make_token(TokenKind::Semicolon),
-            ':' => self.make_token(TokenKind::Colon),
-            '.' => self.make_token(TokenKind::Dot),
+            ':' => {
+                if self.match_char(':') {
+                    self.make_token(TokenKind::ColonColon)
+                } else {
+                    self.make_token(TokenKind::Colon)
+                }
+            },
             '|' => {
                 if self.match_char('|') {
                     self.make_token(TokenKind::Or)
@@ -122,6 +127,16 @@ impl<'a> Lexer<'a> {
                     self.error_token("Unexpected character '&'")
                 }
             }
+            '@' => self.make_token(TokenKind::At),
+            '.' => {
+                if self.peek() == '.' && self.peek_next() == '.' {
+                    self.advance(); // consume second .
+                    self.advance(); // consume third .
+                    self.make_token(TokenKind::Ellipsis)
+                } else {
+                    self.make_token(TokenKind::Dot)
+                }
+            },
             '?' => {
                 if self.peek() == '?' {
                     // chk 4 exists?

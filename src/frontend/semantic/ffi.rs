@@ -2,11 +2,11 @@ use crate::core::ast::*;
 use crate::core::types::resolver::resolve_ast_type;
 use crate::core::types::ty::Type;
 use crate::error::{Diagnostic, DiagnosticKind, Reporter};
-use crate::frontend::semantic::symbol_table::{Symbol, SymbolKind, SymbolTable};
+use crate::frontend::semantic::symbol_table::SymbolTable;
 use codespan::FileId;
 
 pub struct FfiChecker<'a> {
-    symbol_table: &'a SymbolTable,
+    _symbol_table: &'a SymbolTable,
     reporter: &'a mut Reporter,
     file_id: FileId,
 }
@@ -14,7 +14,7 @@ pub struct FfiChecker<'a> {
 impl<'a> FfiChecker<'a> {
     pub fn new(symbol_table: &'a SymbolTable, reporter: &'a mut Reporter, file_id: FileId) -> Self {
         Self {
-            symbol_table,
+            _symbol_table: symbol_table,
             reporter,
             file_id,
         }
@@ -60,6 +60,7 @@ impl<'a> FfiChecker<'a> {
             Type::Generic(_) => false,
             Type::Function(_) => false,
             Type::String => false,
+            Type::TraitObject(_) => false, // trait objects not supported in FFI
         }
     }
 

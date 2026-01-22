@@ -1,5 +1,5 @@
 use crate::core::types::ty::Type;
-use crate::frontend::semantic::symbol_table::{Symbol, SymbolKind, SymbolTable};
+use crate::frontend::semantic::symbol_table::{SymbolKind, SymbolTable};
 use std::collections::HashMap;
 
 pub struct TraitResolver {
