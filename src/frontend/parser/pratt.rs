@@ -1084,7 +1084,13 @@ impl<'a> Parser<'a> {
                 || self.check(&TokenKind::Eof) {
                 break;
             }
+            // save current position before calling parse_infix
+            let pos_before = self.current;
             expr = self.parse_infix(expr, precedence)?;
+            // if parse_infix didn't advance, break to prevent infinite loop
+            if self.current == pos_before {
+                break;
+            }
         }
 
         Ok(expr)
