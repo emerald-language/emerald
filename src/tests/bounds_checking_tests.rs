@@ -77,7 +77,7 @@ def main
   x : int = arr[i]
 end
 "#;
-    let (mir_functions, reporter) = compile_to_mir(source);
+    let (mir_functions, _reporter) = compile_to_mir(source);
     // runtime bounds chk may have type errors during analysis
     // but shld still gen mir w/ bounds chk code
     let main_fn = mir_functions.iter().find(|f| f.name == "main");
