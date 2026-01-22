@@ -617,6 +617,214 @@ end
     assert_file_generated("edge_cases");
 }
 
+#[test]
+fn test_generic_monomorphization_output() {
+    let source = r#"
+struct List [ Type T ]
+  data : ref T
+  size : int
+end
+
+def identity [ Type T ](x : T) returns T
+  return x
+end
+
+def main
+  int_list : List[int] = null
+  float_list : List[float] = null
+  a : int = identity[int](10)
+  b : float = identity[float](3.14)
+end
+"#;
+    
+    let _ = compile_and_output(source, "generic_monomorphization");
+    assert_file_generated("generic_monomorphization");
+}
+
+#[test]
+fn test_ffi_output() {
+    let source = r#"
+foreign "C" libc
+  def printf(format : ref char, ...) returns int
+  def strlen(s : ref char) returns int
+end
+
+foreign "C" math
+  def sin(x : float) returns float
+  def cos(x : float) returns float
+end
+
+def main
+  result : int = printf("hello world")
+  len : int = strlen(null)
+  s : float = sin(3.14)
+  c : float = cos(1.57)
+end
+"#;
+    
+    let _ = compile_and_output(source, "ffi");
+    assert_file_generated("ffi");
+}
+
+#[test]
+fn test_comptime_evaluation_output() {
+    let source = r#"
+def main
+  simple = comptime 2 + 2
+  complex = comptime (10 + 5) * 3 - 7
+  nested = comptime 2 * (3 + comptime 4 * 5)
+  comparison = comptime 10 > 5
+  arithmetic = comptime 100 / 4 + 25
+  
+  comptime x : int = 10
+  y = comptime x + 5
+  
+  if comptime 2 + 2 == 4
+    z = 42
+  end
+end
+"#;
+    
+    let _ = compile_and_output(source, "comptime_full");
+    assert_file_generated("comptime_full");
+}
+
+#[test]
+fn test_trait_system_output() {
+    let source = r#"
+trait Shape
+  def area(self) returns float
+end
+
+struct Circle
+  radius : float
+end
+
+implement Shape for Circle
+  def area(self : ref Circle) returns float
+    return 3.14 * self.radius * self.radius
+  end
+end
+
+struct Rectangle
+  width : float
+  height : float
+end
+
+implement Shape for Rectangle
+  def area(self : ref Rectangle) returns float
+    return self.width * self.height
+  end
+end
+
+def main
+  circle : Circle = Circle { radius: 5.0 }
+  rect : Rectangle = Rectangle { width: 10.0, height: 20.0 }
+  
+  circle_area : float = circle.area()
+  rect_area : float = rect.area()
+end
+"#;
+    
+    let _ = compile_and_output(source, "traits");
+    assert_file_generated("traits");
+}
+
+#[test]
+fn test_array_operations_output() {
+    let source = r#"
+def main
+  arr : int[10] = [1, 2, 3, 4, 5]
+  empty_arr : int[5] = []
+  
+  first : int = arr[0]
+  second : int = arr[1]
+  
+  arr[0] = 100
+  arr[1] = 200
+end
+"#;
+    
+    let _ = compile_and_output(source, "arrays");
+    assert_file_generated("arrays");
+}
+
+#[test]
+fn test_module_system_output() {
+    let source = r#"
+module Utils
+  def helper(x : int) returns int
+    return x * 2
+  end
+  
+  struct Helper
+    value : int
+  end
+end
+
+def main
+  result : int = Utils::helper(10)
+end
+"#;
+    
+    let _ = compile_and_output(source, "modules");
+    assert_file_generated("modules");
+}
+
+#[test]
+fn test_integration_all_features() {
+    let source = r#"
+module Collections
+  struct List [ Type T ]
+    data : ref T
+    size : int
+  end
+  
+  def create [ Type T ] returns List[T]
+    return null
+  end
+end
+
+trait Printable
+  def print(self)
+end
+
+struct Point
+  x : float
+  y : float
+end
+
+implement Printable for Point
+  def print(self : ref Point)
+    return
+  end
+end
+
+foreign "C" libc
+  def printf(format : ref char, ...) returns int
+end
+
+def main
+  comptime size : int = 10
+  arr : int[size] = [1, 2, 3]
+  
+  list : Collections::List[int] = Collections::create[int]()
+  point : Point = Point { x: 1.0, y: 2.0 }
+  
+  point.print()
+  
+  result : int = printf("test")
+  
+  if comptime 2 + 2 == 4
+    x = 42
+  end
+end
+"#;
+    
+    let _ = compile_and_output(source, "integration_all");
+    assert_file_generated("integration_all");
+}
+
 // helper fn 2 chk if fls were generated
 fn assert_file_generated(test_name: &str) {
     let output_dir = "test_output";

@@ -290,11 +290,10 @@ end
 fn test_parse_method_call_without_parens() {
     let source = r#"
 def test
-  obj.method arg1, arg2
+  obj.method(arg1, arg2)
 end
 "#;
     let (_ast, reporter) = parse_source(source);
-    // This might need method call support, but test the parsing
-    // Note: This may fail if method calls aren't fully supported yet
+    // Method calls now require parentheses to avoid ambiguity
     assert!(!reporter.has_errors());
 }

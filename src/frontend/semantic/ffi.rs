@@ -2,7 +2,7 @@ use crate::core::ast::*;
 use crate::core::types::resolver::resolve_ast_type;
 use crate::core::types::ty::Type;
 use crate::error::{Diagnostic, DiagnosticKind, Reporter};
-use crate::frontend::semantic::symbol_table::{Symbol, SymbolKind, SymbolTable};
+use crate::frontend::semantic::symbol_table::SymbolTable;
 use codespan::FileId;
 
 pub struct FfiChecker<'a> {

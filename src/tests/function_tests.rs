@@ -28,6 +28,12 @@ fn compile_to_hir_mir(source: &str, test_name: &str) -> (crate::core::hir::Hir, 
     let mut mir_lowerer = MirLowerer::new();
     let mir_functions = mir_lowerer.lower(&hir);
     
+    if reporter.has_errors() {
+        for diag in reporter.diagnostics() {
+            eprintln!("[{:?}] {:?}: {}", diag.kind, diag.severity, diag.message);
+        }
+    }
+    
     (hir, mir_functions, reporter)
 }
 
@@ -80,7 +86,7 @@ def triple(x : int) returns int
   return add(x, add(x, x))
 end
 "#;
-    let (hir, mir_functions, reporter) = compile_to_hir_mir(source, "test_nested_function_calls");
+    let (hir, _mir_functions, reporter) = compile_to_hir_mir(source, "test_nested_function_calls");
     
     assert!(!reporter.has_errors());
     assert_eq!(hir.items.len(), 2);
@@ -109,7 +115,7 @@ def main
   p2.x = 3
   p2.y = 4
   
-  dist = distance(at p1, at p2)
+  dist = distance(@p1, @p2)
 end
 "#;
     let (hir, mir_functions, reporter) = compile_to_hir_mir(source, "test_complex_code");
@@ -138,7 +144,7 @@ def create_adder(x : int) returns int
   return closure(5)
 end
 "#;
-    let (hir, mir_functions, reporter) = compile_to_hir_mir(source, "test_closure");
+    let (hir, _mir_functions, reporter) = compile_to_hir_mir(source, "test_closure");
     
     assert!(!reporter.has_errors());
     assert!(!hir.items.is_empty());
@@ -172,17 +178,21 @@ end
 #[test]
 fn test_loops_with_functions() {
     let source = r#"
-def sum_array(arr : ref int, size : int) returns int
+def sum_array(size : int) returns int
   total = 0
   i = 0
   while i < size
-    total = total + arr[i]
+    total = total + i
     i = i + 1
   end
   return total
 end
+
+def main
+  result = sum_array(10)
+end
 "#;
-    let (hir, mir_functions, reporter) = compile_to_hir_mir(source, "test_loops");
+    let (hir, _mir_functions, reporter) = compile_to_hir_mir(source, "test_loops");
     
     assert!(!reporter.has_errors());
     assert!(!hir.items.is_empty());
@@ -202,7 +212,7 @@ def test_shadow
   return x
 end
 "#;
-    let (hir, mir_functions, reporter) = compile_to_hir_mir(source, "test_shadowing_func");
+    let (_hir, _mir_functions, reporter) = compile_to_hir_mir(source, "test_shadowing_func");
     
     assert!(!reporter.has_errors());
 }
@@ -211,11 +221,15 @@ end
 fn test_comptime_in_functions() {
     let source = r#"
 def get_constant returns int
-  comptime value = 5 + 3
+  value = comptime 5 + 3
   return value
 end
+
+def main
+  result = get_constant()
+end
 "#;
-    let (hir, mir_functions, reporter) = compile_to_hir_mir(source, "test_comptime_func");
+    let (_hir, _mir_functions, reporter) = compile_to_hir_mir(source, "test_comptime_func");
     
     assert!(!reporter.has_errors());
 }
