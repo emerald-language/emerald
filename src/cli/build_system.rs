@@ -7,22 +7,21 @@ use crate::core::mir::MirFunction;
 use crate::error::Reporter;
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
-use std::fs;
 
 /// build system manages compilation of multiple files and modules
 pub struct BuildSystem {
     config: CompileConfig,
-    progress: ProgressTracker,
+    _progress: ProgressTracker,
     file_cache: HashMap<PathBuf, FileInfo>,
 }
 
 #[derive(Debug, Clone)]
 struct FileInfo {
-    path: PathBuf,
-    file_id: codespan::FileId,
-    ast: Option<crate::core::ast::Ast>,
-    hir: Option<Hir>,
-    mir_functions: Vec<MirFunction>,
+    _path: PathBuf,
+    _file_id: codespan::FileId,
+    _ast: Option<crate::core::ast::Ast>,
+    _hir: Option<Hir>,
+    _mir_functions: Vec<MirFunction>,
 }
 
 impl BuildSystem {
@@ -30,7 +29,7 @@ impl BuildSystem {
         let verbose = config.verbose;
         Self {
             config,
-            progress: ProgressTracker::new(verbose),
+            _progress: ProgressTracker::new(verbose),
             file_cache: HashMap::new(),
         }
     }
@@ -54,16 +53,18 @@ impl BuildSystem {
         let mut all_mir = Vec::new();
         let mut combined_reporter = Reporter::new();
 
-        for (idx, file_path) in source_files.iter().enumerate() {
+        for file_path in source_files.iter() {
             if self.config.verbose {
                 Output::processing_file(file_path.to_string_lossy().as_ref());
             }
 
             match self.compile_file(file_path) {
                 Ok(result) => {
-                    // merge results
-                    all_hir.extend(result.hir.into_iter().flatten());
-                    all_mir.extend(result.mir_functions);
+                    // merge results - clone values to avoid partial move
+                    if let Some(hir) = &result.hir {
+                        all_hir.push(hir.clone());
+                    }
+                    all_mir.extend(result.mir_functions.clone());
                     
                     // merge diagnostics
                     for diag in result.reporter.diagnostics() {
@@ -111,7 +112,7 @@ impl BuildSystem {
     /// compile a single file
     fn compile_file(&mut self, file_path: &Path) -> Result<CompileResult, BuildError> {
         // check cache first
-        if let Some(info) = self.file_cache.get(file_path) {
+        if let Some(_info) = self.file_cache.get(file_path) {
             // return cached result if available
             // TODO: implement caching logic
         }

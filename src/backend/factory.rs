@@ -1,9 +1,4 @@
 use crate::backend::ports::{CodeGen, Emitter, Optimizer};
-use crate::backend::ports::codegen::{CodeGenError, OptimizationLevel};
-use crate::backend::ports::optimizer::OptimizationError;
-use crate::backend::ports::emitter::EmitError;
-use crate::core::mir::MirFunction;
-use crate::backend::ports::codegen::Module;
 use thiserror::Error;
 
 /// backend idntfr

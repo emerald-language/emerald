@@ -4,7 +4,6 @@ use crate::backend::ports::codegen::{CodeGenError, Module, OptimizationLevel, Ba
 use crate::backend::ports::optimizer::OptimizationError;
 use crate::backend::ports::emitter::EmitError;
 use crate::core::mir::MirFunction;
-use crate::core::hir::Hir;
 use std::path::Path;
 
 /// null backend factory

@@ -6,7 +6,9 @@ use std::collections::HashMap;
 /// lifetime checker 4 ensuring memory safety w/ references
 /// tracks lifetime scopes and ensures refs dont outlive their data
 pub struct LifetimeChecker<'a> {
+    #[allow(dead_code)]
     reporter: &'a mut Reporter,
+    #[allow(dead_code)]
     file_id: FileId,
     scopes: Vec<Scope>, // stack of scopes
     lifetime_map: HashMap<String, usize>, // var name -> scope depth
@@ -244,6 +246,7 @@ impl<'a> LifetimeChecker<'a> {
         }
     }
 
+    #[allow(dead_code)]
     fn error(&mut self, span: codespan::Span, message: &str) {
         let diagnostic = Diagnostic::error(
             DiagnosticKind::SemanticError,

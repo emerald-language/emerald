@@ -20,14 +20,14 @@ pub enum BackendInput {
 /// trait 4 code generation - supports both HIR and MIR
 pub trait CodeGen {
     /// gen code from HIR (for HIR-based backends)
-    fn generate_from_hir(&mut self, hir: &[Hir]) -> Result<Module, CodeGenError> {
+    fn generate_from_hir(&mut self, _hir: &[Hir]) -> Result<Module, CodeGenError> {
         Err(CodeGenError::UnsupportedFeature(
             "This backend does not support HIR input".to_string()
         ))
     }
     
     /// gen code from MIR (for MIR-based backends)
-    fn generate_from_mir(&mut self, mir: &[MirFunction]) -> Result<Module, CodeGenError> {
+    fn generate_from_mir(&mut self, _mir: &[MirFunction]) -> Result<Module, CodeGenError> {
         Err(CodeGenError::UnsupportedFeature(
             "This backend does not support MIR input".to_string()
         ))
