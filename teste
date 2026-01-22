@@ -1,0 +1,13 @@
+	.file	"emerald_module"
+	.text
+	.globl	test_arithmetic
+	.p2align	4
+	.type	test_arithmetic,@function
+test_arithmetic:
+	.cfi_startproc
+	retq
+.Lfunc_end0:
+	.size	test_arithmetic, .Lfunc_end0-test_arithmetic
+	.cfi_endproc
+
+	.section	".note.GNU-stack","",@progbits

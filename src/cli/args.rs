@@ -27,6 +27,14 @@ pub struct Cli {
     #[arg(long, value_name = "TYPE", default_value = "binary")]
     pub emit: String,
 
+    /// emit llvm ir
+    #[arg(long)]
+    pub emit_llvm: bool,
+
+    /// emit assembly
+    #[arg(short = 'S')]
+    pub assembly: bool,
+
     /// use llvm backend
     #[arg(long)]
     pub llvm: bool,
@@ -164,12 +172,21 @@ impl CompileConfig {
             BackendType::Llvm
         };
 
+        // determine emit type: --emit-llvm and -S take precedence
+        let emit = if cli.emit_llvm {
+            "llvm-ir".to_string()
+        } else if cli.assembly {
+            "asm".to_string()
+        } else {
+            cli.emit.clone()
+        };
+
         Ok(CompileConfig {
             input,
             output: cli.output.clone(),
             target: cli.target.clone(),
             opt_level: cli.opt_level.clone(),
-            emit: cli.emit.clone(),
+            emit,
             library_paths: cli.library_path.clone(),
             link_libs: cli.link.clone(),
             crate_type: cli.crate_type.clone(),
