@@ -3,12 +3,50 @@ use crate::core::hir::Hir;
 use thiserror::Error;
 
 /// represents a compiled module
-/// this is a placeohlder type that will be rplcd by actl backend implmnttns
-#[derive(Debug, Clone)]
+/// stores backend-specific module data
 pub struct Module {
     pub name: String,
-    // backend spcfc data will be added here
+    // backend-specific data stored as Any for type erasure
+    pub data: Option<Box<dyn std::any::Any + Send + Sync>>,
 }
+
+impl Module {
+    pub fn new(name: String) -> Self {
+        Self {
+            name,
+            data: None,
+        }
+    }
+    
+    pub fn with_data(name: String, data: Box<dyn std::any::Any + Send + Sync>) -> Self {
+        Self {
+            name,
+            data: Some(data),
+        }
+    }
+}
+
+impl std::fmt::Debug for Module {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Module")
+            .field("name", &self.name)
+            .field("data", &"<backend-specific>")
+            .finish()
+    }
+}
+
+impl Clone for Module {
+    fn clone(&self) -> Self {
+        // cloning module without data (backend-specific data can't be cloned generically)
+        // for LLVM modules, this means the clone won't have the module reference
+        Self {
+            name: self.name.clone(),
+            data: None,
+        }
+    }
+}
+
+// Module disposal is handled by the backend-specific wrapper types (e.g., LlvmModuleWrapper)
 
 /// backend input type - some backends use HIR others use MIR
 #[derive(Debug, Clone)]

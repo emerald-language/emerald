@@ -73,11 +73,14 @@ impl BackendRegistry {
         // note: nullbackendfactory is always avlbl as fallback
         registry.register(Box::new(crate::backend::null::NullBackendFactory));
         
-        // td: register llvm backend when implmntd
-        // rgstryrgstr);
+        // register llvm backend
+        // Note: LLVM backend may fail to compile if llvm-sys is not properly configured
+        // For now, we'll try to register it and let it fail gracefully if needed
+        // TODO: make this conditional on llvm-sys availability
+        registry.register(Box::new(crate::backend::llvm::LlvmBackendFactory));
         
         // todo: register native backend when implemented
-        // registryregister);
+        // registry.register(Box::new(crate::backend::native::NativeBackendFactory));
         
         registry
     }

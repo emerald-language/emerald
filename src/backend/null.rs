@@ -45,9 +45,7 @@ impl NullCodeGen {
 impl CodeGen for NullCodeGen {
     fn generate_from_mir(&mut self, _mir: &[MirFunction]) -> Result<Module, CodeGenError> {
         // no op: just ret a plchldr module
-        Ok(Module {
-            name: "null_module".to_string(),
-        })
+        Ok(Module::new("null_module".to_string()))
     }
     
     fn set_optimization_level(&mut self, level: OptimizationLevel) {
